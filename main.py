@@ -29,11 +29,75 @@ icon = pygame.image.load('ufo.png')
 pygame.display.set_icon(icon)
 
 # Colors
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
-RED = (255, 0, 0)
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+
+# Drawing text
+TEXTCOLOR = WHITE
+def drawText(text, font, surface, x, y):
+    textobj = font.render(text, 1, TEXTCOLOR)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+# Terminate function
+def terminate():
+    pygame.quit()
+    sys.exit()
+
+# Fonts
+name_font = pygame.font.SysFont(None, 80)
+headline_font = pygame.font.SysFont(None, 50)
+small_font = pygame.font.SysFont("arial", 35)
+font = pygame.font.Font('freesansbold.ttf', 32)
+
+
+# Selecting difficulty
+def Select_Difficulty():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.KEYDOWN:
+                if event.key != pygame.K_ESCAPE or pygame.K_e or pygame.K_n or pygame.K_h or pygame.K_s:
+                    number_of_bullets = 0
+                drawText('One more time to lock in your choice :)', small_font, screen, (screen_width / 3) - 180, (screen_height / 3) + 250)
+                pygame.display.update()
+                if event.key == pygame.K_ESCAPE:
+                    terminate()
+                elif event.key == pygame.K_e:
+                    #difficulty = 'E'
+                    number_of_bullets = 400
+                elif event.key == pygame.K_n:
+                    #difficulty = 'N'
+                    number_of_bullets = 250
+                elif event.key == pygame.K_h:
+                    #difficulty = 'H'
+                    number_of_bullets = 120
+                elif event.key == pygame.K_s:
+                    #difficulty = 'S'
+                    number_of_bullets = 61
+                return number_of_bullets
+
+# Starting screen
+screen.fill((0, 0, 255))
+screen.blit(background, (0, 0))
+drawText('Space Invaders', name_font, screen, (screen_width / 3) - 50, (screen_height / 3) - 80)
+drawText('Select difficulty:', headline_font, screen, (screen_width / 3) - 30, (screen_height / 3) + 20)
+drawText('E = Easy', small_font, screen, (screen_width / 3) - 30, (screen_height / 3) + 55)
+drawText('N = Normal', small_font, screen, (screen_width / 3) - 30, (screen_height / 3) + 90)
+drawText('H = Hard', small_font, screen, (screen_width / 3) - 30, (screen_height / 3) + 125)
+drawText('S = Super Hard', small_font, screen, (screen_width / 3) - 30, (screen_height / 3) + 160)
+
+pygame.display.update()
+Select_Difficulty()
+number_of_bullets = Select_Difficulty()
+
 
 # Player
 playerImg = pygame.image.load('player.png')
@@ -42,6 +106,14 @@ playerY = (screen_height - 120)#480
 playerX_change = 0
 ability_is_avalible = False
 happened_once = False
+
+
+# Text for ability
+def drawText(text, font, surface, x, y):
+    textobj = font.render(text, 1, TEXTCOLOR)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
 
 # Enemy
 enemyImg = []
@@ -72,18 +144,13 @@ bulletY_change = 10
 bullet_state = "ready"
 
 # Score
-
 score_value = 0
-font = pygame.font.Font('freesansbold.ttf', 32)
 
 textX = 10
-testY = 10
+textY = 10
 
 # Ability
 number_of_abilities = 0
-ability_text_color = WHITE
-ability_font = pygame.font.Font('freesansbold.ttf', 15)
-ability_text = ability_font.render(f"{number_of_abilities} ABILITY/IES READY, PRESS X", True, ability_text_color)
 
 # Explosion, testing
 class Explosion(pygame.sprite.Sprite):
@@ -119,11 +186,6 @@ explosion_group = pygame.sprite.Group()
 
 # Game Over
 over_font = pygame.font.Font('freesansbold.ttf', 64)
-
-def terminate():
-    pygame.quit()
-    sys.exit()
-
 
 def show_score(x, y):
     score = font.render("Score : " + str(score_value), True, WHITE)
@@ -164,6 +226,8 @@ def ability():
         enemyX[i] = random.randint(0, screen_width - 64)
         enemyY[i] = random.randint(50, 150)
 
+# Collision detection, bullet and enemy
+
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow(enemyX - bulletX, 2) + (math.pow(enemyY - bulletY, 2)))
     if distance < 27:
@@ -180,10 +244,9 @@ while running:
     screen.fill(BLACK)
     # Background Image
     screen.blit(background, (0, 0))
-    #screen.blit(ability_text, (600, 500))
 
 
-    # Explosion another stuff i dont understand
+    # Explosion
     explosion_group.draw(screen)
     explosion_group.update()
 	
@@ -211,7 +274,9 @@ while running:
                     bulletSound.play()
                     # Get the current x cordinate of the spaceship
                     bulletX = playerX
-                    fire_bullet(bulletX, bulletY)
+                    if number_of_bullets > 0:
+                        number_of_bullets -= 1
+                        fire_bullet(bulletX, bulletY)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -225,9 +290,6 @@ while running:
 
     if (score_value % 5) != 0:
         happened_once = False
-
-    #if number_of_abilities > 0:
-    #    screen.blit(ability_text, (600, 500))
 
     # Winnin
     if score_value == 60:
@@ -254,6 +316,7 @@ while running:
             for j in range(num_of_enemies):
                 enemyY[j] = 2000
             game_over_text()
+            number_of_abilities = 0
             break
 
         enemyX[i] += enemyX_change[i]
@@ -288,8 +351,14 @@ while running:
         bulletY -= bulletY_change
 
     player(playerX, playerY)
-    show_score(textX, testY)
-    screen.blit(ability_text, (550, 500))
+    show_score(textX, textY)
+
+    if number_of_abilities == 1:
+        drawText(f'{number_of_abilities} ABILITY AVALIBLE', font, screen, 470, 10)
+    else:
+        drawText(f'{number_of_abilities} ABILITIES AVALIBLE', font, screen, 435, 10)
+
+    drawText(f'Bullets: {number_of_bullets}', font, screen, 600, 39)
     pygame.display.update()
 
 
