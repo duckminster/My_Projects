@@ -1,1 +1,6 @@
-".idea" 
+# Development environment config.
+.idea 
+
+# Multimedia files.
+*.png
+*.wav

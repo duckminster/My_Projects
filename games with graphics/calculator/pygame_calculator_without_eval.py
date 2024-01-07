@@ -105,7 +105,7 @@ while True:
 
                             case 3:
                                 if float(second_part) != 0.0:
-                                    result = (float(first_part) // float(second_part))
+                                    result = (float(first_part) / float(second_part))
                                 else:
                                     result = 'Error, cannot divide by 0'
 
