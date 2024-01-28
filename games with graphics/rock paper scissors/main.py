@@ -89,7 +89,7 @@ def maingame():
         # rock and scissor
         elif val == 'Rock' and pc_opt == 'Scissor':
             L1 = Label(text=f'{nameinp.get()} Won', font='lucida 15 bold', bg='black', fg='gold')
-            L1.grid(row=6, column=1, pady=15)
+            L1.grid(row=7, column=1, pady=15)
             userscore += 1
 
         # paper and scissor
@@ -126,7 +126,7 @@ def maingame():
     # used the label() to add various labels on the new window
     head = Label(text='Rock Paper Scissor', font='arial 35 bold', bg='black', fg='white')
     head.grid(columnspan=2, row=0, ipadx=70, padx=33, pady=10)
-    head1 = Label(text='CopyAssignment', font='arial 35 bold', bg='red', fg='white')
+    head1 = Label(text='Good Luck', font='arial 35 bold', bg='red', fg='white')
     head1.grid(columnspan=2, row=1, ipadx=70, padx=33, pady=10)
     playerone = Label(text=f'Player 1 : {nameinp.get()}', font='lucida 16')
     playerone.grid(row=2, column=0)
@@ -165,11 +165,11 @@ def maingame():
 
 # if __name__=='__main__':
 root = Tk()
-root.title('Rock Paper Scissor - CopyAssignment')
+root.title('Rock Paper Scissors')
 root.wm_iconbitmap("play.png")
 root.geometry('650x750')
 # this maxsize() function is used to set the max size of window equivlent to the one that we passed in the function
-root.maxsize
+root.maxsize()
 # this is minsize() function annd it is bascially responsible for handling the minimum size of the tkinter window
 root.minsize(650, 450)
 
